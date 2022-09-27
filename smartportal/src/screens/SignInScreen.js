@@ -36,13 +36,13 @@ export function SignInScreen({navigation}) {
 
 
   let schema = yup.object().shape({
-    email: yup.string().email("pleaseEnterValidEmail").required('emailIsRequired'),
-    password: yup.string().required("passwordIsRequired")
+    email: yup.string().email("Please enter valid email").required('Email is required'),
+    password: yup.string().required("Password is required")
   });
 
   const login = async (formValues) => {
     console.log(formValues)
-   
+  
     dispatch(showLoader())
     const fdata = new FormData();
     fdata.append('email', formValues.email);
@@ -107,7 +107,7 @@ export function SignInScreen({navigation}) {
                   justifyContent: 'center',
                 }}>
                 <Formik
-                  initialValues={{ email: 'test@gmail.com', password: '12345678',type:'job_seeker' }}
+                  initialValues={{ email: 'maher.malhem2@gmail.com', password: '12345678',type:'job_seeker' }}
                   onSubmit={values => {
                     login(values)
                   }}

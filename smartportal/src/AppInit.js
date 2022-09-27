@@ -11,6 +11,7 @@ import { RegisterScreen } from './screens/RegisterScreen';
 import { HomeScreen } from './screens/HomeScreen';
 import { SettingScreen } from './screens/SettingScreen';
 import { SplashScreen } from './screens';
+
 const Tab = createBottomTabNavigator();
 
 function HomeTab() {

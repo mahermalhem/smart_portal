@@ -34,9 +34,8 @@ export function RegisterScreen({navigation}) {
 
   const [seekerEmp, setSeekerEmp] = React.useState('');
 
-
   let schema = yup.object().shape({
-    email: yup.string().email("pleaseEnterValidEmail").required('Emai is required'),
+    email: yup.string().email("Please enter valid email").required('Emai is required'),
     password: yup.string().required("Password is required"),
     password_confirm: yup.string().required("Password confirm is required"),
     username: yup.string().required("Username is required"),

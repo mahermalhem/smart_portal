@@ -22,7 +22,7 @@ import Loader from './src/components/Loader';
  
  const App = () => {
    return (
-       <SafeAreaView style={{flex:1,backgroundColor:"transparent"}}>
+       <SafeAreaView style={{flex:1,backgroundColor:"transparent",}}>
          <StatusBar barStyle="light-content" />
          <AppInit/>
          <Loader/>

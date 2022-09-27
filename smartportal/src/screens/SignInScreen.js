@@ -19,10 +19,21 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import {AuthContext} from '../utils';
 import { COLOR } from '../constants/COLORS';
+import { ENDPOINTS } from '../constants/endpoints';
+import { hideLoader } from '../redux/actions/loaderAction';
+import { showLoader } from '../redux/actions/loaderAction';
+import Toast from 'react-native-toast-message';
+import { RadioButton } from 'react-native-paper';
+
+
 export function SignInScreen({navigation}) {
 
   const {signIn} = React.useContext(AuthContext);
   const {container, txtInput} = styles;
+  const dispatch = useDispatch()
+
+  const [seekerEmp, setSeekerEmp] = React.useState('job_seeker');
+
 
   let schema = yup.object().shape({
     email: yup.string().email("pleaseEnterValidEmail").required('emailIsRequired'),
@@ -31,39 +42,51 @@ export function SignInScreen({navigation}) {
 
   const login = async (formValues) => {
     console.log(formValues)
-    // dispatch(showLoader())
-    // const fdata = new FormData();
-    // fdata.append('clientEmail', formValues.email);
-    // fdata.append('clientPassword', formValues.password);
-    // fetch(ENDPOINTS.BASE_URL + ENDPOINTS.LOGIN, {
-    //   method: 'POST',
-    //   body: fdata
-    // }).then((response) => response.json())
-    //   .then((json) => {
-    //     dispatch(hideLoader())
-    //     if (json['status']) {
-    //       console.log(json)
-    //       setSecureData('token',json['client_token'])
-    //       setSecureData('client_id',json['client_id'])
-    //       dispatch(setUserMethod({
-    //         client_name_en:json['client_name_en'],
-    //         client_name_ar:json['client_name_ar'],
-    //         client_email:json['client_email'],
-    //         bank_id: json['bank_id'],
-    //         currency_ar: json['currency_ar'],
-    //         currency_en: json['currency_en'],
-    //         iban : json['iban']
-    //       }))
-    //       dispatch(openPinCodeBottomSheet())
-    //     } else {
-    //       Toast.show(strings('common.wrongEmailOrPassword'), Toast.SHORT)
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     Toast.show(error + strings('common.networkDefaultMessage'), Toast.SHORT)
-    //     console.log(error);
-    //     dispatch(hideLoader())
-    //   });
+   
+    dispatch(showLoader())
+    const fdata = new FormData();
+    fdata.append('email', formValues.email);
+    fdata.append('password', formValues.password);
+    fdata.append('type', formValues.type);
+    fdata.append('device_token', "device_token test");
+
+    fetch(ENDPOINTS.BASE_URL + ENDPOINTS.LOGIN, {
+      method: 'POST',
+      body: fdata
+    }).then((response) => response.json())
+      .then((json) => {
+        dispatch(hideLoader())
+        console.log(json)
+        if(json['status']){
+          console.log(json)
+          //signIn()
+        }else{
+          Toast.show(json['msg'], Toast.SHORT)
+        }
+        // if (json['status']) {
+        //   console.log(json)
+        //   setSecureData('token',json['client_token'])
+        //   setSecureData('client_id',json['client_id'])
+        //   dispatch(setUserMethod({
+        //     client_name_en:json['client_name_en'],
+        //     client_name_ar:json['client_name_ar'],
+        //     client_email:json['client_email'],
+        //     bank_id: json['bank_id'],
+        //     currency_ar: json['currency_ar'],
+        //     currency_en: json['currency_en'],
+        //     iban : json['iban']
+        //   }))
+        //   dispatch(openPinCodeBottomSheet())
+        // } else {
+        //   Toast.show(strings('common.wrongEmailOrPassword'), Toast.SHORT)
+        // }
+      })
+      .catch((error) => {
+        Toast.show(error, Toast.SHORT)
+        console.log(error);
+        dispatch(hideLoader())
+      });
+      signIn()
   }
 
 
@@ -74,8 +97,8 @@ export function SignInScreen({navigation}) {
         style={styles.container}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={{ flex: 1 }}>
-            <ScrollView>
+          <View style={{marginVertical:wp(10)}}>
+          <ScrollView>
               <View
                 style={{
                   flex: 1,
@@ -84,7 +107,7 @@ export function SignInScreen({navigation}) {
                   justifyContent: 'center',
                 }}>
                 <Formik
-                  initialValues={{ email: 'Ahmad456@gmail.com', password: 'KiIpN88M' }}
+                  initialValues={{ email: 'test@gmail.com', password: '12345678',type:'job_seeker' }}
                   onSubmit={values => {
                     login(values)
                   }}
@@ -123,6 +146,40 @@ export function SignInScreen({navigation}) {
                           <Text style={{ fontSize: wp(3), color: COLOR.RED,}}>{errors.password}</Text>
                         }
                       </View>
+                      <TouchableOpacity
+                        onPress={() =>{
+                          values.type="job_seeker"
+                          setSeekerEmp('job_seeker')
+                        }}
+                        style={{flexDirection:'row',alignItems:'center'}}>
+                        <RadioButton
+                          value="job_seeker"
+                          status={ seekerEmp === 'job_seeker' ? 'checked' : 'unchecked' }
+                          onPress={() =>{
+                            values.type="job_seeker"
+                            setSeekerEmp('job_seeker')
+                          }}
+                        />
+                        <Text style={{ fontSize: wp(4), color: COLOR.DEFAULT_COLOR,}}>Job seeker</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity 
+                        onPress={() =>{ 
+                          values.type="employee"
+                          setSeekerEmp('employee')
+                        }}
+                        style={{flexDirection:'row',alignItems:'center',}}>
+                        <RadioButton
+                          value="employee"
+                          status={ seekerEmp === 'employee' ? 'checked' : 'unchecked'}
+                          onPress={() =>{ 
+                            values.type="employee"
+                            setSeekerEmp('employee')
+                          }}
+                        />
+                        <Text style={{ fontSize: wp(4), color: COLOR.DEFAULT_COLOR,}}>Employee</Text>
+                      </TouchableOpacity>
+
+                                           
                       <TouchableOpacity onPress={handleSubmit} style={{
                         backgroundColor: COLOR.DEFAULT_COLOR,
                         justifyContent: 'center',
@@ -133,16 +190,22 @@ export function SignInScreen({navigation}) {
                       }}>
                         <Text style={{ color: 'white' }}>Login</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style={{ marginTop: wp(3) }}>
+                      <TouchableOpacity style={{ marginTop: wp(3) }} onPress={()=>{
+
+                      }}>
                         <Text style={{  }}>Forget password</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={{ marginTop: wp(3),flexDirection:'row' }} onPress={()=>{
+                        navigation.navigate('Register')
+                      }}>
+                        <Text style={{  }}>Don't have account ? </Text><Text style={{ color:'blue' }}>Registe </Text>
                       </TouchableOpacity>
                     </View>
                   )}
                 </Formik>
               </View>
-            </ScrollView>
+          </ScrollView>
           </View>
-
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
       {/* <Button title="Sign in" onPress={() => signIn({username, password})} /> */}

@@ -39,7 +39,7 @@ const StackAuth = createStackNavigator();
 function AuthStack() {
   return (
     <StackAuth.Navigator initialRouteName="SignIn">
-      <StackAuth.Screen name="SignIn" component={SignInScreen} />
+      <StackAuth.Screen name="SignIn" component={SignInScreen} options={{title:'Sign in'}}/>
       <StackAuth.Screen name="Register" component={RegisterScreen} />
     </StackAuth.Navigator>
   );

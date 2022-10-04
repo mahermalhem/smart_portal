@@ -22,8 +22,9 @@ import { COLOR } from '../constants/COLORS';
 import { ENDPOINTS } from '../constants/endpoints';
 import { hideLoader } from '../redux/actions/loaderAction';
 import { showLoader } from '../redux/actions/loaderAction';
-import Toast from 'react-native-toast-message';
+import Toast from 'react-native-simple-toast';
 import { RadioButton } from 'react-native-paper';
+import { setUserMethod } from '../redux/actions/userAction';
 
 
 export function SignInScreen({navigation}) {
@@ -42,51 +43,45 @@ export function SignInScreen({navigation}) {
 
   const login = async (formValues) => {
     console.log(formValues)
-  
     dispatch(showLoader())
     const fdata = new FormData();
     fdata.append('email', formValues.email);
     fdata.append('password', formValues.password);
     fdata.append('type', formValues.type);
-    fdata.append('device_token', "device_token test");
+    
 
     fetch(ENDPOINTS.BASE_URL + ENDPOINTS.LOGIN, {
       method: 'POST',
+      headers: {
+        "device-token":"test api"
+      },
       body: fdata
     }).then((response) => response.json())
       .then((json) => {
         dispatch(hideLoader())
-        console.log(json)
         if(json['status']){
           console.log(json)
-          //signIn()
+          // dispatch(setUserMethod({
+          //   client_name_en:json['client_name_en'],
+          //   client_name_ar:json['client_name_ar'],
+          //   client_email:json['client_email'],
+          //   bank_id: json['bank_id'],
+          //   currency_ar: json['currency_ar'],
+          //   currency_en: json['currency_en'],
+          //   iban : json['iban']
+          // }))
+          dispatch(setUserMethod(json['data']))
+          signIn()
         }else{
-          Toast.show(json['msg'], Toast.SHORT)
+          console.log(json)
+          Toast.show(json.msg, Toast.SHORT)
         }
-        // if (json['status']) {
-        //   console.log(json)
-        //   setSecureData('token',json['client_token'])
-        //   setSecureData('client_id',json['client_id'])
-        //   dispatch(setUserMethod({
-        //     client_name_en:json['client_name_en'],
-        //     client_name_ar:json['client_name_ar'],
-        //     client_email:json['client_email'],
-        //     bank_id: json['bank_id'],
-        //     currency_ar: json['currency_ar'],
-        //     currency_en: json['currency_en'],
-        //     iban : json['iban']
-        //   }))
-        //   dispatch(openPinCodeBottomSheet())
-        // } else {
-        //   Toast.show(strings('common.wrongEmailOrPassword'), Toast.SHORT)
-        // }
       })
       .catch((error) => {
         Toast.show(error, Toast.SHORT)
         console.log(error);
         dispatch(hideLoader())
       });
-      signIn()
   }
 
 
@@ -122,7 +117,6 @@ export function SignInScreen({navigation}) {
                           style={styles.textInput}
                           placeholder="Email"
                           onChangeText={handleChange('email')}
-                          onBlur={handleBlur('email')}
                           value={values.email}
                           multiline
                           numberOfLines={3}
@@ -139,7 +133,6 @@ export function SignInScreen({navigation}) {
                           secureTextEntry
                           placeholder="Password"
                           onChangeText={handleChange('password')}
-                          onBlur={handleBlur('password')}
                           value={values.password}
                         />
                         {errors.password &&

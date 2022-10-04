@@ -43,7 +43,7 @@ export function RegisterScreen({navigation}) {
     type: yup.string().required("Type is required"),
   });
 
-  const login = async (formValues) => {
+  const register = async (formValues) => {
     console.log(formValues)
    
     dispatch(showLoader())
@@ -54,11 +54,12 @@ export function RegisterScreen({navigation}) {
     fdata.append('password_confirm', formValues.password_confirm);
     fdata.append('phone', formValues.phone);
     fdata.append('type', formValues.type);
-    fdata.append('device_token', "device_token test");
-
 
     fetch(ENDPOINTS.BASE_URL + ENDPOINTS.REGISTER, {
       method: 'POST',
+      headers: {
+        "device-token":"test api"
+      },
       body: fdata
     }).then((response) => response.json())
       .then((json) => {
@@ -66,7 +67,7 @@ export function RegisterScreen({navigation}) {
         console.log(json)
         if(json['status']){
           console.log(json)
-          //signIn()
+          signIn()
         }else{
           Toast.show(json['msg'], Toast.SHORT)
         }
@@ -76,7 +77,6 @@ export function RegisterScreen({navigation}) {
         console.log(error);
         dispatch(hideLoader())
       });
-      signIn()
   }
 
 
@@ -99,7 +99,7 @@ export function RegisterScreen({navigation}) {
                 <Formik
                   initialValues={{ email: '', password: '',type:'',password_confirm:"",username:'',phone:''}}
                   onSubmit={values => {
-                    login(values)
+                    register(values)
                   }}
                   validationSchema={schema}
                 >

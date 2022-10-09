@@ -25,6 +25,7 @@ import { showLoader } from '../redux/actions/loaderAction';
 import Toast from 'react-native-simple-toast';
 import { RadioButton } from 'react-native-paper';
 import { setUserMethod } from '../redux/actions/userAction';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export function SignInScreen({navigation}) {
@@ -43,6 +44,8 @@ export function SignInScreen({navigation}) {
 
   const login = async (formValues) => {
     console.log(formValues)
+    var DT=await AsyncStorage.getItem('deviceToken')
+
     dispatch(showLoader())
     const fdata = new FormData();
     fdata.append('email', formValues.email);
@@ -53,7 +56,7 @@ export function SignInScreen({navigation}) {
     fetch(ENDPOINTS.BASE_URL + ENDPOINTS.LOGIN, {
       method: 'POST',
       headers: {
-        "device-token":"test api"
+        "device-token":DT,
       },
       body: fdata
     }).then((response) => response.json())
@@ -75,6 +78,7 @@ export function SignInScreen({navigation}) {
         }else{
           console.log(json)
           Toast.show(json.msg, Toast.SHORT)
+          dispatch(hideLoader())
         }
       })
       .catch((error) => {
@@ -102,7 +106,7 @@ export function SignInScreen({navigation}) {
                   justifyContent: 'center',
                 }}>
                 <Formik
-                  initialValues={{ email: 'maher.malhem2@gmail.com', password: '12345678',type:'job_seeker' }}
+                  initialValues={{ email: 'maher.malhem2@gmail.com', password: 'admin1234',type:'job_seeker' }}
                   onSubmit={values => {
                     login(values)
                   }}

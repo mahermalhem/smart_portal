@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "521095394123",
+    "project_id": "smartportal-aecc6",
+    "storage_bucket": "smartportal-aecc6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:521095394123:android:acea68a389c7e9461c2ece",
+        "android_client_info": {
+          "package_name": "com.smartportal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "521095394123-lhasjiejdqbav0kc9i8hfb9702mgncl2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQl7BnhLZtzT8DSsVBjBwv6IGQvesuwio"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "521095394123-lhasjiejdqbav0kc9i8hfb9702mgncl2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

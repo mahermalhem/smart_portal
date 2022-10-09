@@ -12,6 +12,9 @@ import { HomeScreen } from './screens/HomeScreen';
 import { SettingScreen } from './screens/SettingScreen';
 import { SplashScreen } from './screens';
 
+import { fcmService } from '../src/services/NotificationService/FCMService';
+import { localNotificationService } from '../src/services/NotificationService/localNotificationService';
+
 const Tab = createBottomTabNavigator();
 
 function HomeTab() {
@@ -103,7 +106,25 @@ export default function AppInit({navigation}) {
 
     bootstrapAsync();
   }, []);
+  React.useEffect(() => {
+    //fcmService.registerAppWithFCM()
+    //fcmService.register(onRegister, onNotification, onOpenNotification)
+    fcmService.getToken(onRegister)
+    localNotificationService.configure(onOpenNotification)
 
+    async function onRegister(token) {
+      console.log("[App] onRegister: ", token)
+      await AsyncStorage.setItem('deviceToken', token);
+    }
+    function onNotification(notify) {
+
+    }
+    function onOpenNotification(notify) {
+
+    }
+
+  }, [])
+  
   const authContext = React.useMemo(
     () => ({
       signIn: async data => {
@@ -128,6 +149,8 @@ export default function AppInit({navigation}) {
     }),
     [],
   );
+
+
   
   return (
     <AuthContext.Provider value={authContext}>

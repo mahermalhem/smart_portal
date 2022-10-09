@@ -22,8 +22,9 @@ import { COLOR } from '../constants/COLORS';
 import { ENDPOINTS } from '../constants/endpoints';
 import { hideLoader } from '../redux/actions/loaderAction';
 import { showLoader } from '../redux/actions/loaderAction';
-import Toast from 'react-native-toast-message';
+import Toast from 'react-native-simple-toast';
 import { RadioButton } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export function RegisterScreen({navigation}) {
@@ -45,8 +46,9 @@ export function RegisterScreen({navigation}) {
 
   const register = async (formValues) => {
     console.log(formValues)
-   
+    var DT=await AsyncStorage.getItem('deviceToken')
     dispatch(showLoader())
+
     const fdata = new FormData();
     fdata.append('username', formValues.username);
     fdata.append('email', formValues.email);
@@ -58,18 +60,17 @@ export function RegisterScreen({navigation}) {
     fetch(ENDPOINTS.BASE_URL + ENDPOINTS.REGISTER, {
       method: 'POST',
       headers: {
-        "device-token":"test api"
+        "device-token" : DT
       },
       body: fdata
     }).then((response) => response.json())
       .then((json) => {
         dispatch(hideLoader())
-        console.log(json)
         if(json['status']){
-          console.log(json)
+          dispatch(setUserMethod(json['data']))
           signIn()
         }else{
-          Toast.show(json['msg'], Toast.SHORT)
+          Toast.show(JSON.stringify(json['errors']), Toast.SHORT)
         }
       })
       .catch((error) => {

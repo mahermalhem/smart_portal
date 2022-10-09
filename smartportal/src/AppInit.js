@@ -1,19 +1,21 @@
 import * as React from 'react';
-import {Button, Text, TextInput, View} from 'react-native';
+import {Button, Text, TextInput, View, LogBox} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import { AuthContext } from './utils';
+import {AuthContext} from './utils';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { SignInScreen } from './screens/SignInScreen';
-import { RegisterScreen } from './screens/RegisterScreen';
-import { HomeScreen } from './screens/HomeScreen';
-import { SettingScreen } from './screens/SettingScreen';
-import { SplashScreen } from './screens';
-
-import { fcmService } from '../src/services/NotificationService/FCMService';
-import { localNotificationService } from '../src/services/NotificationService/localNotificationService';
+import {SignInScreen} from './screens/SignInScreen';
+import {RegisterScreen} from './screens/RegisterScreen';
+import {HomeScreen} from './screens/HomeScreen';
+import {SettingScreen} from './screens/SettingScreen';
+import {SplashScreen} from './screens';
+import NetInfo from '@react-native-community/netinfo';
+import {fcmService} from '../src/services/NotificationService/FCMService';
+import {localNotificationService} from '../src/services/NotificationService/localNotificationService';
+import AppNotConnected from './components/AppNotConnected';
+import { ForgetPassword } from './screens/ForgetPassword';
 
 const Tab = createBottomTabNavigator();
 
@@ -25,7 +27,7 @@ function HomeTab() {
         component={HomeScreen} /*component={HomeStack}*/
         options={{
           tabBarLabel: 'Home',
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons name="home" color={color} size={size} />
           ),
         }}
@@ -43,8 +45,15 @@ const StackAuth = createStackNavigator();
 function AuthStack() {
   return (
     <StackAuth.Navigator initialRouteName="SignIn">
-      <StackAuth.Screen name="SignIn" component={SignInScreen} options={{title:'Sign in'}}/>
+      <StackAuth.Screen
+        name="SignIn"
+        component={SignInScreen}
+        options={{title: 'Sign in'}}
+      />
       <StackAuth.Screen name="Register" component={RegisterScreen} />
+      <StackAuth.Screen name="ForgetPassword" component={ForgetPassword}
+         options={{title: 'Forget password'}}
+      />
     </StackAuth.Navigator>
   );
 }
@@ -52,6 +61,16 @@ function AuthStack() {
 const Stack = createStackNavigator();
 
 export default function AppInit({navigation}) {
+  const [isConnected, setIsConnected] = React.useState(true);
+
+  React.useEffect(() => {
+    NetInfo.addEventListener(state => {
+      console.log('Connection type', state.type);
+      console.log('Is connected?', state.isConnected);
+      setIsConnected(state.isConnected);
+    });
+  }, []);
+
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
       switch (action.type) {
@@ -87,6 +106,12 @@ export default function AppInit({navigation}) {
   );
 
   React.useEffect(() => {
+    LogBox.ignoreLogs([
+      'ViewPropTypes will be removed from React Native. Migrate to ViewPropTypes exported',
+      'removeListener',
+      'Clipboard has been extracted from react-native core',
+      "Can't perform a React state update on an unmounted ",
+    ]);
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
       let userToken;
@@ -109,22 +134,17 @@ export default function AppInit({navigation}) {
   React.useEffect(() => {
     //fcmService.registerAppWithFCM()
     //fcmService.register(onRegister, onNotification, onOpenNotification)
-    fcmService.getToken(onRegister)
-    localNotificationService.configure(onOpenNotification)
+    fcmService.getToken(onRegister);
+    localNotificationService.configure(onOpenNotification);
 
     async function onRegister(token) {
-      console.log("[App] onRegister: ", token)
+      console.log('[App] onRegister: ', token);
       await AsyncStorage.setItem('deviceToken', token);
     }
-    function onNotification(notify) {
+    function onNotification(notify) {}
+    function onOpenNotification(notify) {}
+  }, []);
 
-    }
-    function onOpenNotification(notify) {
-
-    }
-
-  }, [])
-  
   const authContext = React.useMemo(
     () => ({
       signIn: async data => {
@@ -150,32 +170,32 @@ export default function AppInit({navigation}) {
     [],
   );
 
-
-  
   return (
-    <AuthContext.Provider value={authContext}>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{headerShown: false}}>
-          {state.isLoading ? (
-            // We haven't finished checking for the token yet
-            <Stack.Screen name="Splash" component={SplashScreen} />
-          ) : state.userToken == null ? (
-            // No token found, user isn't signed in
-            <Stack.Screen
-              name="SignInAuth"
-              component={AuthStack}
-              options={{
-                title: 'Sign in',
-                // When logging out, a pop animation feels intuitive
-                animationTypeForReplace: state.isSignout ? 'pop' : 'push',
-              }}
-            />
-          ) : (
-            // User is signed in
-            <Stack.Screen name="HomeAuth" component={HomeTab} />
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </AuthContext.Provider>
+      <AuthContext.Provider value={authContext}>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{headerShown: false}}>
+            {state.isLoading ? (
+              // We haven't finished checking for the token yet
+              <Stack.Screen name="Splash" component={SplashScreen} />
+            ) : state.userToken == null ? (
+              // No token found, user isn't signed in
+              <Stack.Screen
+                name="SignInAuth"
+                component={AuthStack}
+                options={{
+                  title: 'Sign in',
+                  // When logging out, a pop animation feels intuitive
+                  animationTypeForReplace: state.isSignout ? 'pop' : 'push',
+                }}
+              />
+            ) : (
+              // User is signed in
+              <Stack.Screen name="HomeAuth" component={HomeTab} />
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+        {!isConnected ? <AppNotConnected /> : null}
+
+      </AuthContext.Provider>
   );
 }

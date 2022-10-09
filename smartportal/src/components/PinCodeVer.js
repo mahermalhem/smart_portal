@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useState} from 'react';
 import {
@@ -23,12 +24,46 @@ import {
   UIActivityIndicator,
   WaveIndicator,
 } from 'react-native-indicators';
-import {useSelector} from 'react-redux';
 import Modal from 'react-native-modal';
 import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
+import {ENDPOINTS} from '../constants/endpoints';
+import Toast from 'react-native-simple-toast';
+import {hideLoader, showLoader} from '../redux/actions/loaderAction';
+import { useDispatch, useSelector } from 'react-redux';
 
 const PinCodeVer = props => {
   const [code, setCode] = useState('');
+  const dispatch = useDispatch()
+
+  const activateUser = () => {
+    if (code.length >= 6) {
+      console.log(code, props.email);
+      dispatch(showLoader());
+      const fdata = new FormData();
+      fdata.append('email', props.email);
+      fdata.append('code', code);
+
+      fetch(ENDPOINTS.BASE_URL + ENDPOINTS.ACTIVATE_USER, {
+        method: 'POST',
+        body: fdata,
+      })
+        .then(response => response.json())
+        .then(json => {
+          dispatch(hideLoader());
+          if (json['status']) {
+            props.setUserStatus('active');
+          } else {
+            Toast.show(JSON.stringify(json['errors']), Toast.SHORT);
+          }
+        })
+        .catch(error => {
+          Toast.show(error, Toast.SHORT);
+          console.log(error);
+          dispatch(hideLoader());
+        });
+      // props.setUserStatus('active');
+    }
+  };
 
   return (
     <View style={{}}>
@@ -44,13 +79,16 @@ const PinCodeVer = props => {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.container}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View  style={{
+            <View
+              style={{
                 flex: 1,
                 backgroundColor: 'white',
                 borderRadius: 30,
                 padding: wp(10),
-                }}>
-              <Text style={{color:'black',ontSize:wp(4)}}>Check your email for verification code ! </Text>
+              }}>
+              <Text style={{color: 'black', fontSize: wp(4)}}>
+                Verification code has been sent to {props.email} !
+              </Text>
               <SmoothPinCodeInput
                 cellStyle={{
                   borderBottomWidth: 2,
@@ -62,6 +100,33 @@ const PinCodeVer = props => {
                 codeLength={6}
                 onTextChange={code => setCode(code)}
               />
+              <TouchableOpacity
+                style={{
+                  marginVertical: wp(2),
+                  backgroundColor: 'blue',
+                  borderRadius: 30,
+                  padding: wp(4),
+                }}
+                onPress={() => {
+                  activateUser();
+                }}>
+                <Text style={{color: 'black', fontSize: wp(4)}}>
+                  Verify account
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  marginVertical: wp(2),
+                  backgroundColor: 'red',
+                  borderRadius: 30,
+                  padding: wp(4),
+                }}
+                onPress={() => {
+                  console.log('prop');
+                  props.setUserStatus('active');
+                }}>
+                <Text style={{color: 'black', ontSize: wp(4)}}>Close</Text>
+              </TouchableOpacity>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>

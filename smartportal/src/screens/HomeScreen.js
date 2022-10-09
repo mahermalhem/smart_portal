@@ -29,12 +29,6 @@ useSelector(state => {
     <SafeAreaView style={container}>
       <Text>Home Screen! {username} {access_token}</Text>
       <Button title="Sign out" onPress={signOut} />
-      <Text>dsada</Text>
-      {
-        status != 'inactive'
-          ?<PinCodeVer />
-          :null
-      }
     </SafeAreaView>
   );
 }

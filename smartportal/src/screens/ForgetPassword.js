@@ -24,69 +24,38 @@ import { hideLoader } from '../redux/actions/loaderAction';
 import { showLoader } from '../redux/actions/loaderAction';
 import Toast from 'react-native-simple-toast';
 import { RadioButton } from 'react-native-paper';
-import { setUserMethod } from '../redux/actions/userAction';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import PinCodeVer from '../components/PinCodeVer';
+import { setUserMethod } from '../redux/actions/userAction';
 
 
-export function SignInScreen({navigation}) {
+export function ForgetPassword({navigation}) {
 
   const {signIn} = React.useContext(AuthContext);
   const {container, txtInput} = styles;
   const dispatch = useDispatch()
 
-  const [seekerEmp, setSeekerEmp] = React.useState('job_seeker');
-  const [userStatus , setUserStatus] = React.useState('active');
-
+  const [seekerEmp, setSeekerEmp] = React.useState('');
 
   let schema = yup.object().shape({
-    email: yup.string().email("Please enter valid email").required('Email is required'),
-    password: yup.string().required("Password is required")
+    email: yup.string().email("Please enter valid email").required('Emai is required'),
+    password: yup.string().required("Password is required"),
+    password_confirm: yup.string().required("Password confirm is required"),
+    code: yup.string().required("Code is required"),
   });
 
-  const login = async (formValues) => {
-    console.log(formValues)
-    var DT=await AsyncStorage.getItem('deviceToken')
-
+  const sendCodeToEmail=(email)=>{
+    
     dispatch(showLoader())
     const fdata = new FormData();
-    fdata.append('email', formValues.email);
-    fdata.append('password', formValues.password);
-    fdata.append('type', formValues.type);
-    
+    fdata.append('email', email);
 
-    fetch(ENDPOINTS.BASE_URL + ENDPOINTS.LOGIN, {
+    fetch(ENDPOINTS.BASE_URL + ENDPOINTS.SEND_RESET_PASSWORD_VERFICATION, {
       method: 'POST',
-      headers: {
-        "device-token":DT,
-      },
       body: fdata
     }).then((response) => response.json())
       .then((json) => {
         dispatch(hideLoader())
-        if(json['status']){
-          console.log(json)
-          // dispatch(setUserMethod({
-          //   client_name_en:json['client_name_en'],
-          //   client_name_ar:json['client_name_ar'],
-          //   client_email:json['client_email'],
-          //   bank_id: json['bank_id'],
-          //   currency_ar: json['currency_ar'],
-          //   currency_en: json['currency_en'],
-          //   iban : json['iban']
-          // }))
-          dispatch(setUserMethod(json['data']))
-          signIn()
-        }else{
-          console.log(json)
-          if(JSON.stringify(json.errors)){
-            var err=JSON.stringify(json.errors);
-            Toast.show(err, Toast.SHORT)
-            if(err.includes('Inactive')){
-              setUserStatus('inactive')
-            }
-          }
-        }
+        Toast.show("Please check your email", Toast.SHORT)
       })
       .catch((error) => {
         Toast.show(error, Toast.SHORT)
@@ -95,6 +64,35 @@ export function SignInScreen({navigation}) {
       });
   }
 
+  const changePass = async (formValues) => {
+    console.log(formValues)
+
+    dispatch(showLoader())
+    const fdata = new FormData();
+    fdata.append('email', formValues.email);
+    fdata.append('password', formValues.password);
+    fdata.append('password_confirm', formValues.password_confirm);
+    fdata.append('code', formValues.code);
+
+
+    fetch(ENDPOINTS.BASE_URL + ENDPOINTS.RESET_PASSWORD, {
+      method: 'POST',
+      body: fdata
+    }).then((response) => response.json())
+      .then((json) => {
+        dispatch(hideLoader())
+        if(json==null){
+            navigation.navigate('SignIn')
+        }else{
+            Toast.show("Code is incorrect", Toast.SHORT)
+        }
+      })
+      .catch((error) => {
+        Toast.show(error, Toast.SHORT)
+        console.log(error);
+        dispatch(hideLoader())
+      });
+  }
 
   return (
     <View style={container}>
@@ -113,19 +111,14 @@ export function SignInScreen({navigation}) {
                   justifyContent: 'center',
                 }}>
                 <Formik
-                  initialValues={{ email: 'maherola204@gmail.com', password: '12345678',type:'employee' }}
+                  initialValues={{ email: '', password: '',password_confirm:"",code:''}}
                   onSubmit={values => {
-                    login(values)
+                    changePass(values)
                   }}
                   validationSchema={schema}
                 >
                   {({ handleChange, handleBlur, handleSubmit, values, errors, isValid }) => (
                     <View style={{ flex: 1, marginBottom: wp(10), width: '90%', }}>
-                        {
-                          userStatus == 'inactive'
-                            ?<PinCodeVer email={values.email} setUserStatus={setUserStatus}/>
-                            :null
-                        }
                       <View style={styles.textInputContainer}>
                         <TextInput
                           name={'email'}
@@ -133,6 +126,7 @@ export function SignInScreen({navigation}) {
                           style={styles.textInput}
                           placeholder="Email"
                           onChangeText={handleChange('email')}
+                          // onBlur={handleBlur('email')}
                           value={values.email}
                           multiline
                           numberOfLines={3}
@@ -149,73 +143,67 @@ export function SignInScreen({navigation}) {
                           secureTextEntry
                           placeholder="Password"
                           onChangeText={handleChange('password')}
+                          // onBlur={handleBlur('password')}
                           value={values.password}
                         />
                         {errors.password &&
                           <Text style={{ fontSize: wp(3), color: COLOR.RED,}}>{errors.password}</Text>
                         }
                       </View>
-                      <TouchableOpacity
-                        onPress={() =>{
-                          values.type="job_seeker"
-                          setSeekerEmp('job_seeker')
-                        }}
-                        style={{flexDirection:'row',alignItems:'center'}}>
-                        <RadioButton
-                          value="job_seeker"
-                          status={ seekerEmp === 'job_seeker' ? 'checked' : 'unchecked' }
-                          onPress={() =>{
-                            values.type="job_seeker"
-                            setSeekerEmp('job_seeker')
-                          }}
+                      <View style={styles.textInputContainer}>
+                        <TextInput
+                          name={'password_confirm'}
+                          id='4'
+                          style={styles.textInput}
+                          secureTextEntry
+                          placeholder="Password confirm"
+                          onChangeText={handleChange('password_confirm')}
+                          // onBlur={handleBlur('password_confirm')}
+                          value={values.password_confirm}
                         />
-                        <Text style={{ fontSize: wp(4), color: COLOR.DEFAULT_COLOR,}}>Job seeker</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity 
-                        onPress={() =>{ 
-                          values.type="employee"
-                          setSeekerEmp('employee')
-                        }}
-                        style={{flexDirection:'row',alignItems:'center',}}>
-                        <RadioButton
-                          value="employee"
-                          status={ seekerEmp === 'employee' ? 'checked' : 'unchecked'}
-                          onPress={() =>{ 
-                            values.type="employee"
-                            setSeekerEmp('employee')
-                          }}
+                        {errors.password_confirm &&
+                          <Text style={{ fontSize: wp(3), color: COLOR.RED,}}>{errors.password_confirm}</Text>
+                        }
+                      </View>
+                      <View style={styles.textInputContainer}>
+                        <TextInput
+                          name={'code'}
+                          id='5'
+                          style={styles.textInput}
+                          placeholder="Code"
+                          onChangeText={handleChange('code')}
+                          // onBlur={handleBlur('phone')}
+                          value={values.phone}
+                          keyboardType={'decimal-pad'}
                         />
-                        <Text style={{ fontSize: wp(4), color: COLOR.DEFAULT_COLOR,}}>Employee</Text>
-                      </TouchableOpacity>
-
-                                           
+                        {errors.code &&
+                          <Text style={{ fontSize: wp(3), color: COLOR.RED,}}>{errors.code}</Text>
+                        }
+                      </View>         
                       <TouchableOpacity onPress={handleSubmit} style={{
                         backgroundColor: COLOR.DEFAULT_COLOR,
                         justifyContent: 'center',
                         alignItems: 'center',
                         borderRadius: 30,
                         marginHorizontal: wp(4),
+                        marginTop:wp(5),
                         height: wp(10),
                       }}>
-                        <Text style={{ color: 'white' }}>Login</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={{ marginTop: wp(3) }} onPress={()=>{
-                        navigation.navigate('ForgetPassword')
-                      }}>
-                        <Text style={{  }}>Forget password</Text>
+                        <Text style={{ color: 'white' }}>Change password</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={{ marginTop: wp(3),flexDirection:'row' }} onPress={()=>{
-                        navigation.navigate('Register')
+                        console.log(errors.email)
+                        if(errors.email==undefined && values.email.length!=0){
+                            sendCodeToEmail(values.email)
+                        }
                       }}>
-                        <Text style={{  }}>Don't have account ? </Text><Text style={{ color:'blue' }}>Registe </Text>
+                        <Text style={{  }}>Code recived  ? </Text><Text style={{ color:'blue' }}>Get code </Text>
                       </TouchableOpacity>
                     </View>
                   )}
-                  
                 </Formik>
               </View>
           </ScrollView>
-         
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>

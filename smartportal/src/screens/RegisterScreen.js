@@ -25,6 +25,7 @@ import { showLoader } from '../redux/actions/loaderAction';
 import Toast from 'react-native-simple-toast';
 import { RadioButton } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setUserMethod } from '../redux/actions/userAction';
 
 
 export function RegisterScreen({navigation}) {
@@ -67,8 +68,7 @@ export function RegisterScreen({navigation}) {
       .then((json) => {
         dispatch(hideLoader())
         if(json['status']){
-          dispatch(setUserMethod(json['data']))
-          signIn()
+          navigation.navigate('SignIn')
         }else{
           Toast.show(JSON.stringify(json['errors']), Toast.SHORT)
         }
@@ -113,7 +113,7 @@ export function RegisterScreen({navigation}) {
                           style={styles.textInput}
                           placeholder="Username"
                           onChangeText={handleChange('username')}
-                          onBlur={handleBlur('username')}
+                          // onBlur={handleBlur('username')}
                           value={values.username}
                         />
                         {errors.username &&
@@ -127,7 +127,7 @@ export function RegisterScreen({navigation}) {
                           style={styles.textInput}
                           placeholder="Email"
                           onChangeText={handleChange('email')}
-                          onBlur={handleBlur('email')}
+                          // onBlur={handleBlur('email')}
                           value={values.email}
                           multiline
                           numberOfLines={3}
@@ -144,7 +144,7 @@ export function RegisterScreen({navigation}) {
                           secureTextEntry
                           placeholder="Password"
                           onChangeText={handleChange('password')}
-                          onBlur={handleBlur('password')}
+                          // onBlur={handleBlur('password')}
                           value={values.password}
                         />
                         {errors.password &&
@@ -159,7 +159,7 @@ export function RegisterScreen({navigation}) {
                           secureTextEntry
                           placeholder="Password confirm"
                           onChangeText={handleChange('password_confirm')}
-                          onBlur={handleBlur('password_confirm')}
+                          // onBlur={handleBlur('password_confirm')}
                           value={values.password_confirm}
                         />
                         {errors.password_confirm &&
@@ -173,7 +173,7 @@ export function RegisterScreen({navigation}) {
                           style={styles.textInput}
                           placeholder="Phone number"
                           onChangeText={handleChange('phone')}
-                          onBlur={handleBlur('phone')}
+                          // onBlur={handleBlur('phone')}
                           value={values.phone}
                           keyboardType={'decimal-pad'}
                         />

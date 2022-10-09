@@ -3,7 +3,7 @@ import {Text, View} from 'react-native';
 
 export function SplashScreen() {
   return (
-    <View>
+    <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
       <Text>Loading...</Text>
     </View>
   );

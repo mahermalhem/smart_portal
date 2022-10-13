@@ -89,7 +89,7 @@ export function SignInScreen({navigation}) {
         }
       })
       .catch((error) => {
-        Toast.show(error, Toast.SHORT)
+        // Toast.show(JSON.stringify(error), Toast.SHORT)
         console.log(error);
         dispatch(hideLoader())
       });
@@ -113,7 +113,7 @@ export function SignInScreen({navigation}) {
                   justifyContent: 'center',
                 }}>
                 <Formik
-                  initialValues={{ email: 'maherola204@gmail.com', password: '12345678',type:'employee' }}
+                  initialValues={{ email: '', password: '',type:'employee' }}
                   onSubmit={values => {
                     login(values)
                   }}

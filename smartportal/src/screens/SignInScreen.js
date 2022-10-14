@@ -124,7 +124,7 @@ export function SignInScreen({navigation}) {
                         {
                           userStatus == 'inactive'
                             ?<PinCodeVer email={values.email} setUserStatus={setUserStatus}/>
-                            :null
+                            : null
                         }
                       <View style={styles.textInputContainer}>
                         <TextInput

@@ -21,6 +21,7 @@
         android:launchMode="singleTask"
         android:windowSoftInputMode="adjustPan"
         android:exported="true"
+        android:layoutDirection="ltr"
         android:screenOrientation="portrait">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />

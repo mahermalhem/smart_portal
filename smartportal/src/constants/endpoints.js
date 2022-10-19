@@ -5,5 +5,7 @@ export const ENDPOINTS = {
   REGISTER:'authentication/register/',
   ACTIVATE_USER:"/authentication/activate-user/",
   SEND_RESET_PASSWORD_VERFICATION:"/authentication/send-reset-password-verification/",
-  RESET_PASSWORD:"/authentication/reset-password/"
+  RESET_PASSWORD:"/authentication/reset-password/",
+  
+  COMPANY_JOB_LIST:"job/job-list/"
 };

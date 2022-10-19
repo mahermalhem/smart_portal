@@ -28,21 +28,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setUserMethod } from '../redux/actions/userAction';
 
 
-export function ForgetPassword({navigation,route}) {
+export function EmailForgetPassword({navigation}) {
 
   const {signIn} = React.useContext(AuthContext);
   const {container, txtInput} = styles;
   const dispatch = useDispatch()
 
-  const [seekerEmp, setSeekerEmp] = React.useState('');
-
   let schema = yup.object().shape({
     email: yup.string().email("Please enter valid email").required('Emai is required'),
-    password: yup.string().required("Password is required"),
-    password_confirm: yup.string().required("Password confirm is required"),
-    code: yup.string().required("Code is required"),
   });
-
+  
   const sendCodeToEmail=(email)=>{
     
     dispatch(showLoader())
@@ -56,36 +51,6 @@ export function ForgetPassword({navigation,route}) {
       .then((json) => {
         dispatch(hideLoader())
         Toast.show("Please check your email", Toast.SHORT)
-      })
-      .catch((error) => {
-        Toast.show(error, Toast.SHORT)
-        console.log(error);
-        dispatch(hideLoader())
-      });
-  }
-
-  const changePass = async (formValues) => {
-    console.log(formValues)
-
-    dispatch(showLoader())
-    const fdata = new FormData();
-    fdata.append('email', formValues.email);
-    fdata.append('password', formValues.password);
-    fdata.append('password_confirm', formValues.password_confirm);
-    fdata.append('code', formValues.code);
-
-
-    fetch(ENDPOINTS.BASE_URL + ENDPOINTS.RESET_PASSWORD, {
-      method: 'POST',
-      body: fdata
-    }).then((response) => response.json())
-      .then((json) => {
-        dispatch(hideLoader())
-        if(json==null){
-            navigation.navigate('SignIn')
-        }else{
-            Toast.show("Code is incorrect", Toast.SHORT)
-        }
       })
       .catch((error) => {
         Toast.show(error, Toast.SHORT)
@@ -111,9 +76,10 @@ export function ForgetPassword({navigation,route}) {
                   justifyContent: 'center',
                 }}>
                 <Formik
-                  initialValues={{ email: route.params.emailVar, password: '',password_confirm:"",code:''}}
+                  initialValues={{ email: '' }}
                   onSubmit={values => {
-                    changePass(values)
+                    sendCodeToEmail(values.email)
+                    navigation.navigate('ForgetPassword',{emailVar:values.email})
                   }}
                   validationSchema={schema}
                 >
@@ -123,9 +89,8 @@ export function ForgetPassword({navigation,route}) {
                         <TextInput
                           name={'email'}
                           id='1'
-                          style={{}}
-                          placeholder={route.params.emailVar}
-                          editable={false}
+                          style={styles.textInput}
+                          placeholder="Email"
                           onChangeText={handleChange('email')}
                           // onBlur={handleBlur('email')}
                           value={values.email}
@@ -135,52 +100,7 @@ export function ForgetPassword({navigation,route}) {
                         {errors.email &&
                           <Text style={{ fontSize: wp(3), color: COLOR.RED,}}>{errors.email}</Text>
                         }
-                      </View>
-                      <View style={styles.textInputContainer}>
-                        <TextInput
-                          name={'password'}
-                          id='3'
-                          style={styles.textInput}
-                          secureTextEntry
-                          placeholder="Password"
-                          onChangeText={handleChange('password')}
-                          // onBlur={handleBlur('password')}
-                          value={values.password}
-                        />
-                        {errors.password &&
-                          <Text style={{ fontSize: wp(3), color: COLOR.RED,}}>{errors.password}</Text>
-                        }
-                      </View>
-                      <View style={styles.textInputContainer}>
-                        <TextInput
-                          name={'password_confirm'}
-                          id='4'
-                          style={styles.textInput}
-                          secureTextEntry
-                          placeholder="Password confirm"
-                          onChangeText={handleChange('password_confirm')}
-                          // onBlur={handleBlur('password_confirm')}
-                          value={values.password_confirm}
-                        />
-                        {errors.password_confirm &&
-                          <Text style={{ fontSize: wp(3), color: COLOR.RED,}}>{errors.password_confirm}</Text>
-                        }
-                      </View>
-                      <View style={styles.textInputContainer}>
-                        <TextInput
-                          name={'code'}
-                          id='5'
-                          style={styles.textInput}
-                          placeholder="Code"
-                          onChangeText={handleChange('code')}
-                          // onBlur={handleBlur('phone')}
-                          value={values.phone}
-                          keyboardType={'decimal-pad'}
-                        />
-                        {errors.code &&
-                          <Text style={{ fontSize: wp(3), color: COLOR.RED,}}>{errors.code}</Text>
-                        }
-                      </View>         
+                      </View>        
                       <TouchableOpacity onPress={handleSubmit} style={{
                         backgroundColor: COLOR.DEFAULT_COLOR,
                         justifyContent: 'center',
@@ -190,15 +110,7 @@ export function ForgetPassword({navigation,route}) {
                         marginTop:wp(5),
                         height: wp(10),
                       }}>
-                        <Text style={{ color: 'white' }}>Change password</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={{ marginTop: wp(3),flexDirection:'row' }} onPress={()=>{
-                        console.log(errors.email)
-                        if(errors.email==undefined && values.email.length!=0){
-                            sendCodeToEmail(values.email)
-                        }
-                      }}>
-                        <Text style={{  }}>Code recived  ? </Text><Text style={{ color:'blue' }}>Get code </Text>
+                        <Text style={{ color: 'white' }}>Send code</Text>
                       </TouchableOpacity>
                     </View>
                   )}

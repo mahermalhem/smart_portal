@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React, {useCallback, useState} from 'react';
 import {Button, Text, View, SafeAreaView, StyleSheet} from 'react-native';
-import { AuthContext } from '../utils';
+import { AuthContext } from '../../utils';
 import {useDispatch, useSelector} from 'react-redux';
-import PinCodeVer from '../components/PinCodeVer';
+import {useFocusEffect} from '@react-navigation/native';
 
-export function HomeScreen() {
+export function EmpHomeScreen() {
   const {signOut} = React.useContext(AuthContext);
   const {container} = styles;
   var username,
@@ -26,9 +26,16 @@ useSelector(state => {
   (type = state.userReducer.type)
 });
 
+const [jobList, setJobList] = useState([])
+
+useFocusEffect(useCallback(() => {
+
+    
+}, []));
+
   return (
     <SafeAreaView style={container}>
-      <Text>Home Screen! {username} {access_token} {type}</Text>
+      <Text>EmpHomeScreen!! {username} {access_token} {type}</Text>
       <Button title="Sign out" onPress={signOut} />
     </SafeAreaView>
   );

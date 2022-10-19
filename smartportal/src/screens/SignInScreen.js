@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   View,
   Text,
@@ -30,7 +30,22 @@ import PinCodeVer from '../components/PinCodeVer';
 
 
 export function SignInScreen({navigation}) {
+  const getData=async()=>{
+    savedEmail = await AsyncStorage.getItem('savedEmail');
+    savedPassword = await AsyncStorage.getItem('savedPassword');
+    savedType = await AsyncStorage.getItem('savedType');
+    savedToken = await AsyncStorage.getItem('deviceToken');
 
+    console.log("deviceToken",savedToken,savedEmail,savedType,savedPassword)
+    if(savedEmail != null && savedPassword != null && savedType != null ){
+      console.log('looggg him',savedEmail)
+      login({email:savedEmail,password:savedPassword,type:savedType})
+    }
+  }
+  React.useEffect(() => {
+    getData()
+  }, [])
+  
   const {signIn} = React.useContext(AuthContext);
   const {container, txtInput} = styles;
   const dispatch = useDispatch()
@@ -54,7 +69,6 @@ export function SignInScreen({navigation}) {
     fdata.append('password', formValues.password);
     fdata.append('type', formValues.type);
     
-
     fetch(ENDPOINTS.BASE_URL + ENDPOINTS.LOGIN, {
       method: 'POST',
       headers: {
@@ -62,7 +76,7 @@ export function SignInScreen({navigation}) {
       },
       body: fdata
     }).then((response) => response.json())
-      .then((json) => {
+      .then(async (json) => {
         dispatch(hideLoader())
         if(json['status']){
           console.log(json)
@@ -76,6 +90,9 @@ export function SignInScreen({navigation}) {
           //   iban : json['iban']
           // }))
           dispatch(setUserMethod(json['data']))
+          await AsyncStorage.setItem('savedEmail',formValues.email)
+          await AsyncStorage.setItem('savedPassword',formValues.password)
+          await AsyncStorage.setItem('savedType',formValues.type)
           signIn()
         }else{
           console.log(json)
@@ -188,7 +205,6 @@ export function SignInScreen({navigation}) {
                         <Text style={{ fontSize: wp(4), color: COLOR.DEFAULT_COLOR,}}>Employee</Text>
                       </TouchableOpacity>
 
-                                           
                       <TouchableOpacity onPress={handleSubmit} style={{
                         backgroundColor: COLOR.DEFAULT_COLOR,
                         justifyContent: 'center',
@@ -200,7 +216,7 @@ export function SignInScreen({navigation}) {
                         <Text style={{ color: 'white' }}>Login</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={{ marginTop: wp(3) }} onPress={()=>{
-                        navigation.navigate('ForgetPassword')
+                        navigation.navigate('EmailForgetPassword')
                       }}>
                         <Text style={{  }}>Forget password</Text>
                       </TouchableOpacity>

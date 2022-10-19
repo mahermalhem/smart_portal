@@ -6,23 +6,56 @@ import {AuthContext} from './utils';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {SignInScreen} from './screens/SignInScreen';
 import {RegisterScreen} from './screens/RegisterScreen';
 import {HomeScreen} from './screens/HomeScreen';
-import {SettingScreen} from './screens/SettingScreen';
-import {SplashScreen} from './screens';
+import {EmailForgetPassword, SplashScreen} from './screens';
 import NetInfo from '@react-native-community/netinfo';
 import {fcmService} from '../src/services/NotificationService/FCMService';
 import {localNotificationService} from '../src/services/NotificationService/localNotificationService';
 import AppNotConnected from './components/AppNotConnected';
 import { ForgetPassword } from './screens/ForgetPassword';
+import {useDispatch, useSelector} from 'react-redux';
+import { EmpHomeScreen } from './screens/employeeScreens/EmpHomeScreen';
+import { EmpJobScreen } from './screens/employeeScreens/EmpJobScreen';
+import { EmpJobStack } from './screens/employeeScreens/EmpJobStack';
+import { EmpProfileScreen } from './screens/employeeScreens/EmpProfileScreen';
 
-const Tab = createBottomTabNavigator();
+const SeekerTab = createBottomTabNavigator();
+const EmpTab = createBottomTabNavigator();
 
-function HomeTab() {
+function EmployeeHomeTab() {
   return (
-    <Tab.Navigator>
-      <Tab.Screen
+    <EmpTab.Navigator>
+      <EmpTab.Screen
+        name="My profile"
+        component={EmpProfileScreen} 
+        options={{
+          tabBarLabel: 'My profile',
+          tabBarIcon: ({color, size}) => (
+            <AntDesign name="user" color={color} size={size} />
+          ),
+        }}
+      />
+      <EmpTab.Screen
+        name="Jobs"
+        component={EmpJobStack} /*component={HomeStack}*/
+        options={{
+          headerShown:false,
+          tabBarIcon: ({color, size}) => (
+            <MaterialCommunityIcons name="content-paste" color={color} size={size} />
+          ),
+        }}
+      />
+    </EmpTab.Navigator>
+  );
+}
+
+function JobSeekerHomeTab() {
+  return (
+    <SeekerTab.Navigator>
+      <SeekerTab.Screen
         name="Home"
         component={HomeScreen} /*component={HomeStack}*/
         options={{
@@ -32,11 +65,7 @@ function HomeTab() {
           ),
         }}
       />
-      <Tab.Screen
-        name="Setting"
-        component={SettingScreen} /*component={SettingStack}*/
-      />
-    </Tab.Navigator>
+    </SeekerTab.Navigator>
   );
 }
 
@@ -51,6 +80,9 @@ function AuthStack() {
         options={{title: 'Sign in'}}
       />
       <StackAuth.Screen name="Register" component={RegisterScreen} />
+      <StackAuth.Screen name="EmailForgetPassword" component={EmailForgetPassword}
+         options={{title: 'Forget password'}}
+      />
       <StackAuth.Screen name="ForgetPassword" component={ForgetPassword}
          options={{title: 'Forget password'}}
       />
@@ -61,6 +93,13 @@ function AuthStack() {
 const Stack = createStackNavigator();
 
 export default function AppInit({navigation}) {
+
+  var type;
+
+  useSelector(state => {
+    (type = state.userReducer.type)
+  });
+  
   const [isConnected, setIsConnected] = React.useState(true);
 
   React.useEffect(() => {
@@ -70,7 +109,6 @@ export default function AppInit({navigation}) {
       setIsConnected(state.isConnected);
     });
   }, []);
-
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
       switch (action.type) {
@@ -115,9 +153,8 @@ export default function AppInit({navigation}) {
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
       let userToken;
-
       try {
-        userToken = await AsyncStorage.getItem('userToken');
+
       } catch (e) {
         // Restoring token failed
       }
@@ -152,12 +189,12 @@ export default function AppInit({navigation}) {
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `AsyncStorage`
         // In the example, we'll use a dummy token
-
-        console.log('SignIn Data: ', data);
-
         dispatch({type: 'SIGN_IN', token: 'dummy-auth-token'});
       },
-      signOut: () => dispatch({type: 'SIGN_OUT'}),
+      signOut: async () =>{
+        dispatch({type: 'SIGN_OUT'})
+        await AsyncStorage.clear()
+      },
       signUp: async data => {
         // In a production app, we need to send user data to server and get a token
         // We will also need to handle errors if sign up failed
@@ -190,12 +227,13 @@ export default function AppInit({navigation}) {
               />
             ) : (
               // User is signed in
-              <Stack.Screen name="HomeAuth" component={HomeTab} />
+              type=='employee'
+                ?<Stack.Screen name="HomeAuth" component={EmployeeHomeTab} />
+                :<Stack.Screen name="HomeAuth" component={JobSeekerHomeTab} />
             )}
           </Stack.Navigator>
         </NavigationContainer>
         {!isConnected ? <AppNotConnected /> : null}
-
       </AuthContext.Provider>
   );
 }

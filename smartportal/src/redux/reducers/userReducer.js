@@ -1,15 +1,15 @@
 import {SET_USER} from '../actions/actionTypes';
 
 const initialState = {
-  id: 2,
-  type: "job_seeker",
+  id: 100000,
+  type: "employee",
   status: "active",
-  username: "maher2",
-  email: "maher.malhem2@gmail.com",
-  phone: "962770072863",
+  username: "test",
+  email: "test",
+  phone: "00",
   verification_code: "",
-  device_token: "hello",
-  access_token: "-Vm5zAvtwLUnbUc5HMK4q4Q33h07zO5u1664319362"
+  device_token: "test",
+  access_token: "test"
 }
 const userReducer = (state = initialState, action) => {
   switch (action.type) {

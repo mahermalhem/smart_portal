@@ -74,7 +74,7 @@ var userData = [
     },
     {
       label: "Status",
-      value: status
+      value: status,
     },
     {
         label: "Email",
@@ -146,7 +146,6 @@ const _renderItem = ({item, index}) => (
         <View style={{backgroundColor:"lightblue",borderRadius:30,padding:wp(5)}}>
             <FlatList data={userData} renderItem={_renderItem} />
         </View>
-      {/* <Button title="Sign out" onPress={signOut} /> */}
     </SafeAreaView>
   );
 }
@@ -154,6 +153,6 @@ const _renderItem = ({item, index}) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    margin:wp(3)
+    margin:wp(2)
   },
 });

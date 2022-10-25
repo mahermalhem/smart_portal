@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
     marginBottom: wp(3),
   },
   item: {
-    backgroundColor: '#f9c2ff',
+    backgroundColor: 'lightblue',
     padding: 5,
     marginVertical: 1,
   },

@@ -86,7 +86,7 @@ const JobCard = props => {
         </View>
         <View style={{flex: 2}}>
           <Text style={{color: 'black', fontSize: wp(3.5)}}>
-            {props.item['address']}{' '}
+            {props.item['address']}
           </Text>
         </View>
       </View>

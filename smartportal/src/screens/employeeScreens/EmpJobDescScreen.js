@@ -68,38 +68,6 @@ export function EmpJobDescScreen({navigation, route}) {
     title: yup.string().required('Title is required'),
   });
 
-  useFocusEffect(
-    useCallback(() => {
-      //console.log('hello', route.params.jobId);
-      //getJobDetails();
-    }, []),
-  );
-  //   useEffect(() => {
-  //     getCompanyJobs()
-  //   }, [])
-
-//   const getJobDetails = async () => {
-//     dispatch(showLoader());
-//     fetch('http://54.162.241.44/api/job/view-job/?id=' + route.params.jobId, {
-//       method: 'GET',
-//       headers: {
-//         Authorization: 'Bearer ' + access_token, //change to auth_key in diff api
-//       },
-//     })
-//       .then(response => response.json())
-//       .then(async json => {
-//         dispatch(hideLoader());
-//         if (json['status']) {
-//           console.log(json['data']);
-//           setJob(json['data']);
-//         }
-//       })
-//       .catch(error => {
-//         // Toast.show(JSON.stringify(error), Toast.SHORT)
-//         console.log(error);
-//         dispatch(hideLoader());
-//       });
-//   };
   const updateJob = async formValues => {
     console.log(formValues);
 
@@ -273,13 +241,12 @@ export function EmpJobDescScreen({navigation, route}) {
                                                  //setSelectedCountry(item+","+section.title)
                                                  values.country=item+","+section.title
                                                  setCountryModal(false)
-                                                 console.log(item,",",section.title);
                                              }}>
                                              <Text style={styles.title}>{item}</Text>
                                      </TouchableOpacity>)
                                  }}
                                  renderSectionHeader={({ section: { title } }) => (
-                                     <Text style={styles.header}>{title}</Text>
+                                     <Text style={styles.header}>{title} Region</Text>
                                  )}
                              />
                              </Modal>
@@ -356,7 +323,7 @@ const styles = StyleSheet.create({
       marginBottom: wp(3),
     },
     item: {
-      backgroundColor: '#f9c2ff',
+      backgroundColor: 'lightblue',
       padding: 5,
       marginVertical: 1,
     },

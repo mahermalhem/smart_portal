@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import * as React from 'react';
 import {Button, Text, TextInput, View, LogBox} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
@@ -21,9 +22,11 @@ import { EmpHomeScreen } from './screens/employeeScreens/EmpHomeScreen';
 import { EmpJobScreen } from './screens/employeeScreens/EmpJobScreen';
 import { EmpJobStack } from './screens/employeeScreens/EmpJobStack';
 import { EmpProfileScreen } from './screens/employeeScreens/EmpProfileScreen';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
 const SeekerTab = createBottomTabNavigator();
 const EmpTab = createBottomTabNavigator();
+const SeekerDrawer = createDrawerNavigator();
 
 function EmployeeHomeTab() {
   return (
@@ -69,6 +72,22 @@ function JobSeekerHomeTab() {
   );
 }
 
+function JobSeekerHomeDrawer() {
+  return (
+    <SeekerDrawer.Navigator>
+      <SeekerDrawer.Screen
+        name="Home"
+        component={HomeScreen} /*component={HomeStack}*/
+        options={{
+          tabBarLabel: 'Home',
+          tabBarIcon: ({color, size}) => (
+            <MaterialCommunityIcons name="home" color={color} size={size} />
+          ),
+        }}
+      />
+    </SeekerDrawer.Navigator>
+  );
+}
 const StackAuth = createStackNavigator();
 
 function AuthStack() {
@@ -229,7 +248,7 @@ export default function AppInit({navigation}) {
               // User is signed in
               type=='employee'
                 ?<Stack.Screen name="HomeAuth" component={EmployeeHomeTab} />
-                :<Stack.Screen name="HomeAuth" component={JobSeekerHomeTab} />
+                :<Stack.Screen name="HomeAuth" component={JobSeekerHomeDrawer} />
             )}
           </Stack.Navigator>
         </NavigationContainer>

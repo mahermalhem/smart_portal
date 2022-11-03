@@ -7,5 +7,10 @@ export const ENDPOINTS = {
   SEND_RESET_PASSWORD_VERFICATION:"/authentication/send-reset-password-verification/",
   RESET_PASSWORD:"/authentication/reset-password/",
   
-  COMPANY_JOB_LIST:"job/job-list/"
+  COMPANY_JOB_LIST:"job/job-list/",
+
+  //Job seeker
+  LIST_OF_JOBS:"job/job-search/",
+  
+
 };

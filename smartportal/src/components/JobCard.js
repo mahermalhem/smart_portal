@@ -119,7 +119,7 @@ const JobCard = props => {
           });
         }}>
         <Text style={{color: 'purple', fontSize: wp(3.5)}}>Details </Text>
-        <Entypo name="edit" color={'black'} size={wp(5)} />
+        <Entypo name="edit" color={'gray'} size={wp(5)} />
       </TouchableOpacity>
       <TouchableOpacity
         style={{

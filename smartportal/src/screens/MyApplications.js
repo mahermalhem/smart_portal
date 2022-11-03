@@ -22,8 +22,9 @@ import {hideLoader, showLoader} from '../redux/actions/loaderAction';
 import JobCard from '../components/JobCard';
 import SeekerJobCard from '../components/SeekerJobCard';
 import JobSearchBar from '../components/JobSearchBar';
+import ApplicationCard from '../components/applicationCard';
 
-export function HomeScreen({navigation}) {
+export function MyApplications({navigation}) {
   const {signOut} = React.useContext(AuthContext);
   const {container} = styles;
   var username,
@@ -45,26 +46,26 @@ export function HomeScreen({navigation}) {
   });
 
   const listRef = useRef();
-  const [jobsList, setJobsList] = useState([]);
+  const [applicationsList, setApplicationsList] = useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
 
   const dispatch = useDispatch();
 
   useFocusEffect(
     useCallback(() => {
-      getAllJobs();
+      getAllApplications();
     }, []),
   );
 
   const [query, setQuery] = useState('');
   useEffect(() => {
-    getAllJobs();
+    getAllApplications();
   }, [query]);
 
-  const getAllJobs = async () => {
+  const getAllApplications = async () => {
     dispatch(showLoader());
 
-    fetch(ENDPOINTS.BASE_URL + ENDPOINTS.LIST_OF_JOBS + '?query=' + query, {
+    fetch("http://54.162.241.44/api/user-job/user-applications-list/", {
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + access_token, //change to auth_key in diff api
@@ -75,7 +76,7 @@ export function HomeScreen({navigation}) {
         dispatch(hideLoader());
         if (json['status']) {
           // console.log(json['data']['list'])
-          setJobsList(json['data']['list']);
+          setApplicationsList(json['data']['list']);
         }
       })
       .catch(error => {
@@ -83,31 +84,24 @@ export function HomeScreen({navigation}) {
         dispatch(hideLoader());
       });
   };
-  const _renderJob = ({item, index}) => (
-    <SeekerJobCard
+  const _renderApplications = ({item, index}) => (
+    <ApplicationCard
       item={item}
       navigation={navigation}
-      getAllJobs={getAllJobs}
+      getAllApplications={getAllApplications}
       access_token={access_token}
     />
   );
 
   return (
     <SafeAreaView style={container}>
-      <JobSearchBar setQuery={setQuery} />
-      {/* <TouchableOpacity
-        onPress={() => {
-          console.log(access_token);
-        }}>
-        <Text>access_token</Text>
-      </TouchableOpacity> */}
       <View style={{flex: 1, margin: wp(2)}}>
         <FlatList
           ref={listRef}
-          data={jobsList}
+          data={applicationsList}
           nestedScrollEnabled
           style={{flex: 1, marginVertical: wp(1)}}
-          renderItem={_renderJob}
+          renderItem={_renderApplications}
           keyExtractor={(item, index) => index.toString()}
           snapToInterval={wp(15)}
           showsVerticalScrollIndicator={false}
@@ -116,7 +110,7 @@ export function HomeScreen({navigation}) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={() => {
-                getAllJobs();
+                getAllApplications();
               }}
             />
           }
@@ -130,7 +124,7 @@ export function HomeScreen({navigation}) {
                       fontSize: wp(5),
                       textAlign: 'center',
                     }}>
-                    There is no jobs added yet !
+                    You haven't applied for any job yet !
                   </Text>
                 </View>
               </View>

@@ -37,6 +37,7 @@ import {
     heightPercentageToDP as hp,
     widthPercentageToDP as wp,
 } from "react-native-responsive-screen"; 
+import { COLOR } from '../constants/COLORS';
 
 export function DrawerContent(props) {
 
@@ -45,9 +46,27 @@ export function DrawerContent(props) {
     const dispatch = useDispatch();
 
     return (
-        <View>
-            <Text>hello</Text>
-            <Button title="Sign out" onPress={signOut} />
+        <View style={{flex:1,height:"100%",width:'100%',alignItems:'center',justifyContent:'center'}}>
+            <Text style={{color:COLOR.DEFAULT_COLOR,fontSize:wp(6),margin:wp(2)}}>SMART PORTAL</Text>
+
+            <View style={{flex:1,width:'100%',alignItems:'center',justifyContent:'flex-start',paddingTop:wp(20),paddingHorizontal:wp(2)}}>
+                <TouchableOpacity onPress={()=>{
+                    props.navigation.navigate("Home")
+                }} style={{width:'100%',height:wp(15),backgroundColor:COLOR.DEFAULT_COLOR,alignItems:'center',justifyContent:'center',marginBottom:wp(2)}}>
+                    <Text style={{color:'white',fontSize:wp(5)}}>Home screen</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={()=>{
+                    props.navigation.navigate("myProfile")
+                }} style={{width:'100%',height:wp(15),backgroundColor:COLOR.DEFAULT_COLOR,alignItems:"center",justifyContent:'center',marginBottom:wp(1)}}>
+                    <Text style={{color:'white',fontSize:wp(5)}}>My Profile</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={()=>{
+                    props.navigation.navigate("myApplications")
+                }} style={{width:'100%',height:wp(15),backgroundColor:COLOR.DEFAULT_COLOR,alignItems:'center',justifyContent:'center',marginBottom:wp(2)}}>
+                    <Text style={{color:'white',fontSize:wp(5)}}>My applications</Text>
+                </TouchableOpacity>
+                <Button title="Sign out" onPress={signOut} />
+            </View>
         </View>
     );
 }

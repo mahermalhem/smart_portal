@@ -64,13 +64,14 @@ useSelector(state => {
 
 var userData = [
     {
-        label: 'Company name',
+        label: type=='employee'? 'Company name':"User name",
         value: username
     },
     {
         label: "Phone number",
         value: phone,
-        phoneIcon: <Icon name="phone-square-alt" size={30} color="black" />,
+        icon: <Icon name="copy" size={30} color="black" />,
+        //phoneIcon: <Icon name="phone-square-alt" size={30} color="black" />,
     },
     {
       label: "Status",

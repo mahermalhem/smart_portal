@@ -170,7 +170,6 @@ const SeekerJobCard = props => {
           {props.item['companyDetails']['username']}
         </Text>
       </View>
-
       <View
         style={{
           flex: 2,

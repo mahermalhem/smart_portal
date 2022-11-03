@@ -28,6 +28,8 @@ import {
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
 import {DrawerContent} from './components/DrawerContent';
+import { MyApplications } from './screens/MyApplications';
+import { EmpApplications } from './screens/employeeScreens/EmpApplications';
 
 const SeekerTab = createBottomTabNavigator();
 const EmpTab = createBottomTabNavigator();
@@ -54,6 +56,19 @@ function EmployeeHomeTab() {
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons
               name="content-paste"
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+      />
+      <EmpTab.Screen
+        name="Applications"
+        component={EmpApplications} /*component={HomeStack}*/
+        options={{
+          tabBarIcon: ({color, size}) => (
+            <MaterialCommunityIcons
+              name="application"
               color={color}
               size={size}
             />
@@ -95,6 +110,9 @@ function JobSeekerHomeDrawer() {
       }}
       drawerContent={props => <DrawerContent {...props} />}>
       <SeekerDrawer.Screen name="Home" component={HomeScreen} />
+      <SeekerDrawer.Screen name="myProfile" options={{title: 'My profile'}} component={EmpProfileScreen} />
+      <SeekerDrawer.Screen name="myApplications" options={{title: 'My Applications'}} component={MyApplications} />
+
     </SeekerDrawer.Navigator>
   );
 }

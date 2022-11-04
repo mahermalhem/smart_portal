@@ -112,7 +112,12 @@ export function SignInScreen({navigation}) {
       });
   }
 
-
+  // nadanaseer44@gmail.com 
+  // 12345
+  // Job seeker 
+  // nada.and44@gmail.com
+  // 12345
+  // Employ
   return (
     <View style={container}>
       <KeyboardAvoidingView

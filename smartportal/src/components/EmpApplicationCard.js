@@ -152,7 +152,8 @@ import {
         {props.item['file'] != null 
             ?<TouchableOpacity
             onPress={()=>{
-                Linking.openURL(props.item['file'])
+                //Linking.openURL(props.item['file'])
+                Linking.openURL("https://drive.google.com/file/d/1KDk0HfP_KEQWw1bfEmwfV97LkF6JBKvw/view?usp=sharing")
             }}
             style={{
                 flex: 2,
@@ -162,7 +163,8 @@ import {
                 marginBottom: wp(2),
             }}>
                 <Text style={{color: COLOR.DEFAULT_COLOR, fontSize: wp(3)}}>
-                    {props.item['file']}
+                    {/* {props.item['file']} */}
+                    https://drive.google.com/file/d/1KDk0HfP_KEQWw1bfEmwfV97LkF6JBKvw/view?usp=sharing
                 </Text>
             </TouchableOpacity>
             :<Text style={{color: 'red', fontSize: wp(3.5)}}>No file</Text>
@@ -293,23 +295,7 @@ import {
       </View>
     );
   };
-  // {
-  //   "id": 13,
-  //   "company_id": 10,
-  //   "title": "nEW",
-  //   "description": "descc",
-  //   "country": "Afif, Riyadh ",
-  //   "address": "1234 hashmi street",
-  //   "created_at": "2022-10-19 21:35:43",
-  //   "isApplied": false,
-  //   "companyDetails": {
-  //       "username": "Nad",
-  //       "email": "maherola204@gmail.com",
-  //       "phone": "07978988",
-  
-  //   }
-  // },
-  
+
   const styles = StyleSheet.create({
     container: {flexDirection: 'row', marginTop: wp(25)},
     textInput: {

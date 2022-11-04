@@ -117,40 +117,6 @@ function JobSeekerHomeDrawer() {
   );
 }
 
-// function HomeDrawer() {
-//   // return <SafeAreaView >
-//   //   <Text>homedsanfaslkfm;akmfskamsf;kam</Text>
-//   // </SafeAreaView>
-
-//   return (
-//     <drawer.Navigator
-//       screenOptions={{
-//         headerShown: false,
-//         drawerType: 'front',
-//         drawerPosition: isRTL == true ? 'right' : 'left',
-//         drawerStyle: {
-//           width:wp(50),
-//           justifyContent: 'center',
-//           alignItems: 'center',
-//         }
-//       }}
-//       drawerContent={props => <DrawerContent {...props} />}
-//     >
-//       <drawer.Screen name="home" component={HomeScreen} />
-//       <drawer.Screen name="favourite" component={FavouritesScreen} />
-//       <drawer.Screen name="recording" component={RecordingScreen} />
-//       <drawer.Screen name="profile" component={ProfileScreen} />
-//       <drawer.Screen name="songDetailesScreen" component={SongDetailesScreen} />
-//       <drawer.Screen name="myRecordsScreen" component={MyRecordsScreen} />
-//       <drawer.Screen name="userProfileScreen" component={UserProfileScreen} />
-//       <drawer.Screen name="groups" component={GroupsScreen} />
-//       <drawer.Screen name="groupRecords" component={GroupRecordsScreen} />
-//       <drawer.Screen name="verify" component={VerifyEmailScreen} />
-
-//     </drawer.Navigator>
-//   );
-// }
-
 const StackAuth = createStackNavigator();
 
 function AuthStack() {

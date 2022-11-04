@@ -23,7 +23,7 @@ import JobCard from '../components/JobCard';
 import SeekerJobCard from '../components/SeekerJobCard';
 import JobSearchBar from '../components/JobSearchBar';
 
-export function HomeScreen({navigation}) {
+export function HomeScreen({navigation}) {//job_seeker
   const {signOut} = React.useContext(AuthContext);
   const {container} = styles;
   var username,
@@ -95,12 +95,6 @@ export function HomeScreen({navigation}) {
   return (
     <SafeAreaView style={container}>
       <JobSearchBar setQuery={setQuery} />
-      {/* <TouchableOpacity
-        onPress={() => {
-          console.log(access_token);
-        }}>
-        <Text>access_token</Text>
-      </TouchableOpacity> */}
       <View style={{flex: 1, margin: wp(2)}}>
         <FlatList
           ref={listRef}

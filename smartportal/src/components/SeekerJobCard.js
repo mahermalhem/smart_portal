@@ -43,38 +43,6 @@ const SeekerJobCard = props => {
     setExpanded(!expanded);
   };
 
-  const checkRemove = () => {
-    Alert.alert(
-      'Delete job',
-      'Are you sure you want to remove ' + props.item['title'],
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {text: 'YES', onPress: () => removeItem()},
-      ],
-    );
-  };
-
-  const removeItem = () => {
-    fetch('http://54.162.241.44/api/job/delete-job/?id=' + props.item['id'], {
-      method: 'DELETE',
-      headers: {
-        Authorization: 'Bearer ' + props.access_token, //change to auth_key in diff api
-      },
-    })
-      .then(response => response.json())
-      .then(json => {
-        console.log(json);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-    props.getAllJobs();
-  };
-
   const showFileInput= async ()=>{
     try {
       const res = await DocumentPicker.pick({
@@ -93,7 +61,7 @@ const SeekerJobCard = props => {
       console.log('File Name : ' + res[0].name);
       console.log('File Size : ' + res[0].size);
       //Setting the state to show single file attributes
-      setFile(res);
+      setFile(res[0].uri);
     } catch (err) {
       //Handling any exception (If any)
       if (DocumentPicker.isCancel(err)) {
@@ -136,6 +104,7 @@ const SeekerJobCard = props => {
         dispatch(hideLoader())
       }
     }
+    
   };
 
   return (
@@ -339,8 +308,7 @@ const SeekerJobCard = props => {
           borderRadius: 30,
           padding: wp(10),
         }}>
-
-<View style={{marginBottom: wp(3)}}>
+        <View style={{marginBottom: wp(3)}}>
             <Text>Note</Text>
             <TextInput
               name={'notes'}
@@ -353,7 +321,7 @@ const SeekerJobCard = props => {
               multiline
               numberOfLines={5}
             />
-          </View>
+        </View>
         <TouchableOpacity
           style={{
             alignSelf: 'center',

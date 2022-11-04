@@ -119,7 +119,7 @@ export function EmpApplications({navigation}) {
                       fontSize: wp(5),
                       textAlign: 'center',
                     }}>
-                    You haven't applied for any job yet !
+                    You have no applications !
                   </Text>
                 </View>
               </View>

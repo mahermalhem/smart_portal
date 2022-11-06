@@ -61,7 +61,7 @@ const SeekerJobCard = props => {
       console.log('File Name : ' + res[0].name);
       console.log('File Size : ' + res[0].size);
       //Setting the state to show single file attributes
-      setFile(res[0].uri);
+      setFile(res);
     } catch (err) {
       //Handling any exception (If any)
       if (DocumentPicker.isCancel(err)) {
